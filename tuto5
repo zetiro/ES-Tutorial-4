@@ -76,6 +76,41 @@ function start_es_process
     fi
 }
 
+function configure_es_template
+{
+    curl localhost:9200
+    if [ $? -ne 0 ]; then
+	echo "Your ES Process is not working yet"
+    else
+	curl -XPUT http://localhost:9200/_template/estemplate -d '
+        {
+            "index_patterns": ["*"],
+            "order" : 0,
+            "settings": {
+                "index.routing.allocation.require.box_type" : "hot"
+            }
+        }'
+    fi
+
+}
+
+function configure_es_shardmove
+{
+    if [ -z $1 ]; then
+	echo "Input Your Index Name"
+    else
+        curl localhost:9200
+        if [ $? -ne 0 ]; then
+    	    echo "Your ES Process is not working yet"
+        else
+    	curl -XPUT http://localhost:9200/$1/_settings -d '
+            {
+                "index.routing.allocation.require.box_type" : "warm"
+            }'
+        fi
+    fi
+}
+
 if [ -z $1 ]; then
         echo "##################### Menu ##############"
         echo " $ ./tuto5 [Command]"
@@ -83,6 +118,8 @@ if [ -z $1 ]; then
         echo "         1 : install java & elasticsearch packages"
         echo "         2 : configure elasticsearch.yml & jvm.options"
         echo "         3 : start elasticsearch process"
+        echo "         4 : hot/warm template settings"
+        echo "         5 : move to warmdata node"
         echo "#########################################";
         exit 1;
 fi
@@ -91,5 +128,7 @@ case "$1" in
         "1" ) install_es_packages;;
         "2" ) configure_es_yaml;;
         "3" ) start_es_process;;
+        "4" ) configure_es_template;;
+        "5" ) configure_es_shardmove;;
         *) echo "Incorrect Command" ;;
 esac

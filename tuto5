@@ -78,11 +78,11 @@ function start_es_process
 
 function configure_es_template
 {
-    curl localhost:9200
+    curl -s localhost:9200 > /dev/null
     if [ $? -ne 0 ]; then
 	echo "Your ES Process is not working yet"
     else
-	curl -XPUT http://localhost:9200/_template/estemplate -d '
+	curl -s -H 'Content-Type: application/json' -XPUT http://localhost:9200/_template/estemplate -d '
         {
             "index_patterns": ["*"],
             "order" : 0,
@@ -99,11 +99,11 @@ function configure_es_shardmove
     if [ -z $1 ]; then
 	echo "Input Your Index Name"
     else
-        curl localhost:9200
+        curl -s localhost:9200 > /dev/null
         if [ $? -ne 0 ]; then
     	    echo "Your ES Process is not working yet"
         else
-    	curl -XPUT http://localhost:9200/$1/_settings -d '
+    	    curl -s -H 'Content-Type: application/json' -XPUT http://localhost:9200/$1/_settings -d '
             {
                 "index.routing.allocation.require.box_type" : "warm"
             }'
@@ -129,6 +129,6 @@ case "$1" in
         "2" ) configure_es_yaml;;
         "3" ) start_es_process;;
         "4" ) configure_es_template;;
-        "5" ) configure_es_shardmove;;
+        "5" ) configure_es_shardmove $2;;
         *) echo "Incorrect Command" ;;
 esac

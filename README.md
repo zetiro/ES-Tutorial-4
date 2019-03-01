@@ -63,7 +63,7 @@ Product Version. 6.6.0(2019/02/07 기준 Latest Ver.)
 [ec2-user@ip-xxx-xxx-xxx-xxx ~]$ sudo vi /etc/elasticsearch/elasticsearch.yml
 ### For ClusterName & Node Name
 cluster.name: mytuto-es
-node.name: ip-172-31-13-110
+node.name: warm-ip-172-31-13-110
 ### For Response by External Request
 network.bind_host: 0.0.0.0
 network.publish_host: {IP}
@@ -102,7 +102,7 @@ node.attr.box_type: warm
 ```bash
 [ec2-user@ip-xxx-xxx-xxx-xxx ~]$ curl localhost:9200
 {
-  "name" : "ip-172-31-13-110",
+  "name" : "warm-ip-172-31-13-110",
   "cluster_name" : "mytuto-es",
   "cluster_uuid" : "fzHl1JNvRd-3KHlleS1WIw",
   "version" : {

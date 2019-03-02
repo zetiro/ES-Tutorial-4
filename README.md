@@ -112,7 +112,7 @@ node.attr.box_type: warm
 10) 두 파일 모두 수정이 완료되었으면 추가할 노드 3대에서 스크립트 3번을 실행하여 ES 프로세스 시작, 클러스터에 잘 조인되는지 확인
 
 ```bash
-[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4-2]$ ./tuto4-1 3
+[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4-2]$ ./tuto4-2 3
 
 ```
 

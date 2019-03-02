@@ -175,11 +175,11 @@ curl -s -H 'Content-Type: application/json' -XPUT http://localhost:9200/$1/_sett
 ### Elasticsearch
 
 ```bash
-[ec2-user@ip-xxx-xxx-xxx-xxx ~]$ curl localhost:9200
+[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4-2]$ curl localhost:9200
 {
-  "name" : "warm-ip-172-31-13-110",
+  "name" : "warm-ip-172-31-5-89",
   "cluster_name" : "mytuto-es",
-  "cluster_uuid" : "fzHl1JNvRd-3KHlleS1WIw",
+  "cluster_uuid" : "LTfRfk3KRLS31kQDROVu9A",
   "version" : {
     "number" : "6.6.0",
     "build_flavor" : "default",
@@ -210,6 +210,6 @@ path.logs: /var/log/elasticsearch 로 설정되어 cluster.name 이 적용된 �
 위의 경우에는 /var/log/elasticsearch/mytuto-es.log 에서 확인할 수 있습니다.
 
 ```bash
-[ec2-user@ip-xxx-xxx-xxx-xxx ~]$ sudo vi /var/log/elasticsearch/mytuto-es.log
+[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4-2]$ sudo vi /var/log/elasticsearch/mytuto-es.log
 ```
 

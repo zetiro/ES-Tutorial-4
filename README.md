@@ -1,6 +1,6 @@
 # ES-Tutorial-4-2
 
-ElasticSearch 다섯 번째 튜토리얼을 기술합니다.
+ElasticSearch 4-2 번째 튜토리얼을 기술합니다.
 
 본 스크립트는 외부 공인망을 기준으로 작성되었습니다.
 
@@ -32,68 +32,143 @@ Product Version. 6.6.0(2019/02/07 기준 Latest Ver.)
          2 : configure elasticsearch.yml & jvm.options
          3 : start elasticsearch process
          4 : hot/warm template settings
-         5 : move to warmdata node
+         5 : all indices move to hotdata node
+         6 : specific index moves to warmdata node
 #########################################
-
-
-[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4-2]$ ./tuto4-2 1
 
 ```
 
 ## ELK Tutorial 4-2 - Elasticsearch Warm Data Node 추가
 
 ### Elasticsearch
-* /etc/elasticsearch/elasticsearch.yml
-  1) cluster.name, node.name, http.cors.enabled, http.cors.allow-origin 기존장비와 동일 설정
-  2) network.host 를 network.bind_host 와 network.publish_host 기존장비와 동일 설정
-  3) http.port, transport.tcp.port 기존장비와 동일 설정
-  4) discovery.zen.minimum_master_nodes 기존장비와 동일 설정
-  5) node.master: false, node.data:true 로 role 동일 설정
-  6) **discovery.zen.ping.unicast.hosts 는 직접 수정 필요, 기존에 설정한 마스터 노드 3대만 설정(데이터노드 아이피 설정 금지)**
-  7) 클러스터에 warm data node 3대가 정상적으로 추가되면 기존 데이터노드 3대에 node.attr.box_type: hot 설정 후 한 대씩 프로세스 재시작
-  8) 4번 스크립트 실행으로 신규 인덱스는 무조건 hot data node 로 할당될 수 있도록 템플릿 설정
-  9) warm data node 로 이동이 필요한 인덱스들은 명령을 통해 강제 재할당 진행
-    - **./tuto4-2 2 실행 후 discovery.zen.ping.unicast.hosts 에 기존 장비와 추가했던 노드 3대의 ip:9300 설정 필요**
+##### /etc/elasticsearch/elasticsearch.yml
 
-
-* /etc/elasticsearch/jvm.options
-  - Xms1g, Xmx1g 를 물리 메모리의 절반으로 수정
+1) cluster.name, node.name, http.cors.enabled, http.cors.allow-origin 기존장비와 동일 설정
+2) network.host 를 network.bind_host 와 network.publish_host 로 분리, 기존장비와 동일 설정
+3) http.port, transport.tcp.port 기존장비와 동일 설정
 
 ```bash
-[ec2-user@ip-xxx-xxx-xxx-xxx ~]$ sudo vi /etc/elasticsearch/elasticsearch.yml
+[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4-2]$ ./tuto4-2 1
+
+[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4-2]$ ./tuto4-2 2
+
+[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4-2]$ sudo vi /etc/elasticsearch/elasticsearch.yml
+
+
 ### For ClusterName & Node Name
 cluster.name: mytuto-es
 node.name: warm-ip-172-31-13-110
-### For Response by External Request
-network.bind_host: 0.0.0.0
-network.publish_host: {IP}
 
 ### For Head
 http.cors.enabled: true
 http.cors.allow-origin: "*"
 
-### ES Node Role Settings
-node.master: false
-node.data: true
+### For Response by External Request
+network.bind_host: 0.0.0.0
+network.publish_host: {IP}
 
 ### ES Port Settings
 http.port: 9200
 transport.tcp.port: 9300
 
-### Discovery Settings
-discovery.zen.ping.unicast.hosts: [  "{IP1}:9300",  "{IP2}:9300",  "{IP3}:9300",  ]
-discovery.zen.minimum_master_nodes: 2
+```
 
+4) node.master: false, node.data:true 로 role 동일 설정
+5) discovery.zen.minimum_master_nodes 기존장비와 동일 설정
+6) **discovery.zen.ping.unicast.hosts 는 직접 수정 필요, 기존에 설정한 마스터 노드 3대만 설정(데이터노드 아이피 설정 금지)**
+7) **./tuto4-2 1 ./tuto4-2 2 실행 후 discovery.zen.ping.unicast.hosts 에 기존 장비와 추가했던 노드 3대의 ip:9300 설정 필요**
+
+```bash
+### ES Node Role Settings
+node.master: false
+node.data: true
+
+### Discovery Settings
+discovery.zen.minimum_master_nodes: 2
+discovery.zen.ping.unicast.hosts: [  "{IP1}:9300",  "{IP2}:9300",  "{IP3}:9300",  ]
+
+```
+
+8) **warm data node 임을 클러스터에서 인식할 수 있도록 node.attr.box_type: warm 추가 설정**
+
+```bash
 ### Hot / Warm Data Node Settings
 node.attr.box_type: warm
 
-[ec2-user@ip-xxx-xxx-xxx-xxx ~]$ sudo vi /etc/elasticsearch/jvm.options
-
-- -Xms1g
-+ -Xms4g
-- -Xmx1g
-+ -Xmx4g
 ```
+
+##### /etc/elasticsearch/jvm.options
+9) Xms1g, Xmx1g 를 물리 메모리의 절반으로 수정
+
+```bash
+[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4-2]$ sudo vi /etc/elasticsearch/jvm.options
+
+
+-Xms4g
+-Xmx4g
+
+```
+
+10) 두 파일 모두 수정이 완료되었으면 추가할 노드 3대에서 스크립트 3번을 실행하여 ES 프로세스 시작, 클러스터에 잘 조인되는지 확인
+
+```bash
+[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4-2]$ ./tuto4-1 3
+
+```
+
+11) **클러스터에 warm data node 3대가 정상적으로 추가되면 기존 데이터노드 3대에 node.attr.box_type: hot 설정 후 한 대씩 프로세스 재시작, 클러스터에서 hot data node 임을 인식할 수 있도록 추가설정**
+
+```bash
+[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4-1]$ sudo vi /etc/elasticsearch/elasticsearch.yml
+
+### Hot / Warm Data Node Settings
+node.attr.box_type: hot
+
+[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4-1]$ systemctl restart elasticsearch.service
+
+```
+
+12) 4번 스크립트 실행으로 신규 인덱스는 무조건 hot data node 로 할당될 수 있도록 템플릿 설정
+
+```bash
+[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4-2]$ ./tuto4-2 4
+
+curl -s -H 'Content-Type: application/json' -XPUT http://localhost:9200/_template/estemplate -d '
+{
+    "index_patterns": ["*"],
+    "order" : 0,
+    "settings": {
+        "index.routing.allocation.require.box_type" : "hot"
+    }
+}'
+
+```
+
+13) 클러스터 내 모든 인덱스에 hot box_type 으로 설정
+
+```bash
+[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4-2]$ ./tuto4-2 5
+
+curl -s -H 'Content-Type: application/json' -XPUT http://localhost:9200/_all/_settings -d '
+{
+    "index.routing.allocation.require.box_type" : "hot"
+}'
+
+```
+
+14) warm data node 로 이동이 필요한 인덱스만 명령을 통해 재할당 진행
+
+```bash
+[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4-2]$ ./tuto4-2 6
+
+curl -s -H 'Content-Type: application/json' -XPUT http://localhost:9200/$1/_settings -d '
+{
+    "index.routing.allocation.require.box_type" : "warm"
+}'
+
+```
+
+이후, curator 를 통해 주기적으로 warm data 에 인덱스를 재할당
 
 ## Smoke Test
 

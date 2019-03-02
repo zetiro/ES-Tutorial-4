@@ -52,6 +52,13 @@ function configure_es_yaml
     sudo echo "### For ClusterName & Node Name" | sudo tee -a ${ES_ETC}/${ES_MYML} > /dev/null
     sudo echo "cluster.name: mytuto-es" | sudo tee -a ${ES_ETC}/${ES_MYML} > /dev/null
     sudo echo "node.name: warm-$ES_NODENAME" | sudo tee -a ${ES_ETC}/${ES_MYML} > /dev/null
+    sudo echo "" | sudo tee -a ${ES_ETC}/${ES_MYML} > /dev/null
+
+    sudo echo "### For Head" | sudo tee -a ${ES_ETC}/${ES_MYML} > /dev/null
+    sudo echo "http.cors.enabled: true" | sudo tee -a ${ES_ETC}/${ES_MYML} > /dev/null
+    sudo echo "http.cors.allow-origin: \"*\"" | sudo tee -a ${ES_ETC}/${ES_MYML} > /dev/null
+    sudo echo "" | sudo tee -a ${ES_ETC}/${ES_MYML} > /dev/null
+
     sudo echo "### For Response by External Request" | sudo tee -a ${ES_ETC}/${ES_MYML} > /dev/null
     sudo echo "network.bind_host: 0.0.0.0" | sudo tee -a ${ES_ETC}/${ES_MYML} > /dev/null
     sudo echo "network.publish_host: $ES_NODEIP" | sudo tee -a ${ES_ETC}/${ES_MYML} > /dev/null
@@ -94,7 +101,24 @@ function configure_es_template
 
 }
 
-function configure_es_shardmove
+function configure_es_hotmove
+{
+    if [ -z $1 ]; then
+	echo "Input Your Index Name"
+    else
+        curl -s localhost:9200 > /dev/null
+        if [ $? -ne 0 ]; then
+    	    echo "Your ES Process is not working yet"
+        else
+    	    curl -s -H 'Content-Type: application/json' -XPUT http://localhost:9200/_all/_settings -d '
+            {
+                "index.routing.allocation.require.box_type" : "hot"
+            }'
+        fi
+    fi
+}
+
+function configure_es_warmmove
 {
     if [ -z $1 ]; then
 	echo "Input Your Index Name"
@@ -119,7 +143,8 @@ if [ -z $1 ]; then
         echo "         2 : configure elasticsearch.yml & jvm.options"
         echo "         3 : start elasticsearch process"
         echo "         4 : hot/warm template settings"
-        echo "         5 : move to warmdata node"
+        echo "         5 : all indices move to hotdata node"
+        echo "         6 : specific index moves to warmdata node"
         echo "#########################################";
         exit 1;
 fi
@@ -129,6 +154,7 @@ case "$1" in
         "2" ) configure_es_yaml;;
         "3" ) start_es_process;;
         "4" ) configure_es_template;;
-        "5" ) configure_es_shardmove $2;;
+        "5" ) configure_es_hotmove $2;;
+        "6" ) configure_es_warmmove $2;;
         *) echo "Incorrect Command" ;;
 esac

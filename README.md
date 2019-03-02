@@ -198,7 +198,7 @@ curl -s -H 'Content-Type: application/json' -XPUT http://localhost:9200/$1/_sett
 
 * Web Browser 에 [http://ec2-52-221-155-168.ap-southeast-1.compute.amazonaws.com:9100/index.html?base_uri=http://{FQDN}:9200](http://ec2-52-221-155-168.ap-southeast-1.compute.amazonaws.com:9100/index.html?base_uri=http://FQDN:9200) 실행
 
-![Optional Text](image/head4-2.png)
+![Optional Text](image/es-head.png)
 
 ## Trouble Shooting
 

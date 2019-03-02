@@ -159,7 +159,7 @@ curl -s -H 'Content-Type: application/json' -XPUT http://localhost:9200/_all/_se
 14) warm data node 로 이동이 필요한 인덱스만 명령을 통해 재할당 진행
 
 ```bash
-[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4-2]$ ./tuto4-2 6
+[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4-2]$ ./tuto4-2 6 firstindex
 
 curl -s -H 'Content-Type: application/json' -XPUT http://localhost:9200/$1/_settings -d '
 {

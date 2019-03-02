@@ -103,18 +103,14 @@ function configure_es_template
 
 function configure_es_hotmove
 {
-    if [ -z $1 ]; then
-	echo "Input Your Index Name"
+    curl -s localhost:9200 > /dev/null
+    if [ $? -ne 0 ]; then
+        echo "Your ES Process is not working yet"
     else
-        curl -s localhost:9200 > /dev/null
-        if [ $? -ne 0 ]; then
-    	    echo "Your ES Process is not working yet"
-        else
-    	    curl -s -H 'Content-Type: application/json' -XPUT http://localhost:9200/_all/_settings -d '
-            {
-                "index.routing.allocation.require.box_type" : "hot"
-            }'
-        fi
+        curl -s -H 'Content-Type: application/json' -XPUT http://localhost:9200/_all/_settings -d '
+        {
+            "index.routing.allocation.require.box_type" : "hot"
+        }'
     fi
 }
 

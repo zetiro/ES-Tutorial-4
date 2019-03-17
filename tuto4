@@ -133,7 +133,7 @@ function configure_es_warmmove
 
 if [ -z $1 ]; then
         echo "##################### Menu ##############"
-        echo " $ ./tuto4-2 [Command]"
+        echo " $ ./tuto4 [Command]"
         echo "#####################%%%%%%##############"
         echo "         1 : install java & elasticsearch packages"
         echo "         2 : configure elasticsearch.yml & jvm.options"

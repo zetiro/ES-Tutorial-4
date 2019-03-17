@@ -1,6 +1,6 @@
-# ES-Tutorial-4-2
+# ES-Tutorial-4
 
-ElasticSearch 네 번째-2 튜토리얼을 기술합니다.
+ElasticSearch 네 번째 튜토리얼을 기술합니다.
 
 본 스크립트는 외부 공인망을 기준으로 작성되었습니다.
 
@@ -20,11 +20,11 @@ Product Version. 6.6.0(2019/02/07 기준 Latest Ver.)
 ```bash
 [ec2-user@ip-xxx-xxx-xxx-xxx ~]$ sudo yum -y install git
 
-[ec2-user@ip-xxx-xxx-xxx-xxx ~]$ git clone https://github.com/benjamin-btn/ES-Tutorial-4-2.git
+[ec2-user@ip-xxx-xxx-xxx-xxx ~]$ git clone https://github.com/benjamin-btn/ES-Tutorial-4.git
 
-[ec2-user@ip-xxx-xxx-xxx-xxx ~]$ cd ES-Tutorial-4-2
+[ec2-user@ip-xxx-xxx-xxx-xxx ~]$ cd ES-Tutorial-4
 
-[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4-2]$ ./tuto4-2
+[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4]$ ./tuto4-2
 ##################### Menu ##############
  $ ./tuto4-2 [Command]
 #####################%%%%%%##############
@@ -48,11 +48,11 @@ Product Version. 6.6.0(2019/02/07 기준 Latest Ver.)
 3) http.port, transport.tcp.port 기존장비와 동일 설정
 
 ```bash
-[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4-2]$ ./tuto4-2 1
+[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4]$ ./tuto4-2 1
 
-[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4-2]$ ./tuto4-2 2
+[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4]$ ./tuto4-2 2
 
-[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4-2]$ sudo vi /etc/elasticsearch/elasticsearch.yml
+[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4]$ sudo vi /etc/elasticsearch/elasticsearch.yml
 
 
 ### For ClusterName & Node Name
@@ -101,7 +101,7 @@ node.attr.box_type: warm
 9) Xms1g, Xmx1g 를 물리 메모리의 절반으로 수정
 
 ```bash
-[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4-2]$ sudo vi /etc/elasticsearch/jvm.options
+[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4]$ sudo vi /etc/elasticsearch/jvm.options
 
 
 -Xms4g
@@ -112,7 +112,7 @@ node.attr.box_type: warm
 10) 두 파일 모두 수정이 완료되었으면 추가할 노드 3대에서 스크립트 3번을 실행하여 ES 프로세스 시작, 클러스터에 잘 조인되는지 확인
 
 ```bash
-[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4-2]$ ./tuto4-2 3
+[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4]$ ./tuto4-2 3
 
 ```
 
@@ -131,7 +131,7 @@ node.attr.box_type: hot
 12) 4번 스크립트 실행으로 신규 인덱스는 무조건 hot data node 로 할당될 수 있도록 템플릿 설정
 
 ```bash
-[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4-2]$ ./tuto4-2 4
+[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4]$ ./tuto4-2 4
 
 curl -s -H 'Content-Type: application/json' -XPUT http://localhost:9200/_template/estemplate -d '
 {
@@ -147,7 +147,7 @@ curl -s -H 'Content-Type: application/json' -XPUT http://localhost:9200/_templat
 13) 클러스터 내 모든 인덱스에 hot box_type 으로 설정
 
 ```bash
-[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4-2]$ ./tuto4-2 5
+[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4]$ ./tuto4-2 5
 
 curl -s -H 'Content-Type: application/json' -XPUT http://localhost:9200/_all/_settings -d '
 {
@@ -159,7 +159,7 @@ curl -s -H 'Content-Type: application/json' -XPUT http://localhost:9200/_all/_se
 14) warm data node 로 이동이 필요한 인덱스만 명령을 통해 재할당 진행
 
 ```bash
-[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4-2]$ ./tuto4-2 6 firstindex
+[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4]$ ./tuto4-2 6 firstindex
 
 curl -s -H 'Content-Type: application/json' -XPUT http://localhost:9200/$1/_settings -d '
 {
@@ -175,7 +175,7 @@ curl -s -H 'Content-Type: application/json' -XPUT http://localhost:9200/$1/_sett
 ### Elasticsearch
 
 ```bash
-[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4-2]$ curl localhost:9200
+[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4]$ curl localhost:9200
 {
   "name" : "warm-ip-172-31-5-89",
   "cluster_name" : "mytuto-es",
@@ -210,6 +210,6 @@ path.logs: /var/log/elasticsearch 로 설정되어 cluster.name 이 적용된 �
 위의 경우에는 /var/log/elasticsearch/mytuto-es.log 에서 확인할 수 있습니다.
 
 ```bash
-[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4-2]$ sudo vi /var/log/elasticsearch/mytuto-es.log
+[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4]$ sudo vi /var/log/elasticsearch/mytuto-es.log
 ```
 

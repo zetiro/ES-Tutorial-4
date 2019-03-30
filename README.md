@@ -17,6 +17,8 @@ Product Version. 6.6.0(2019/02/07 기준 Latest Ver.)
 
 이 튜토리얼에서는 rpm 파일을 이용하여 실습합니다.
 
+Warm Data Node 1~3번 장비에서 실습합니다.
+
 ```bash
 [ec2-user@ip-xxx-xxx-xxx-xxx ~]$ sudo yum -y install git
 
@@ -24,9 +26,9 @@ Product Version. 6.6.0(2019/02/07 기준 Latest Ver.)
 
 [ec2-user@ip-xxx-xxx-xxx-xxx ~]$ cd ES-Tutorial-4
 
-[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4]$ ./tuto4-2
+[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4]$ ./tuto4
 ##################### Menu ##############
- $ ./tuto4-2 [Command]
+ $ ./tuto4 [Command]
 #####################%%%%%%##############
          1 : install java & elasticsearch packages
          2 : configure elasticsearch.yml & jvm.options
@@ -38,7 +40,7 @@ Product Version. 6.6.0(2019/02/07 기준 Latest Ver.)
 
 ```
 
-## ELK Tutorial 4-2 - Elasticsearch Warm Data Node 추가
+## ELK Tutorial 4 - Elasticsearch Warm Data Node 추가
 
 ### Elasticsearch
 ##### /etc/elasticsearch/elasticsearch.yml
@@ -48,9 +50,9 @@ Product Version. 6.6.0(2019/02/07 기준 Latest Ver.)
 3) http.port, transport.tcp.port 기존장비와 동일 설정
 
 ```bash
-[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4]$ ./tuto4-2 1
+[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4]$ ./tuto4 1
 
-[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4]$ ./tuto4-2 2
+[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4]$ ./tuto4 2
 
 [ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4]$ sudo vi /etc/elasticsearch/elasticsearch.yml
 
@@ -76,7 +78,7 @@ transport.tcp.port: 9300
 4) node.master: false, node.data:true 로 role 동일 설정
 5) discovery.zen.minimum_master_nodes 기존장비와 동일 설정
 6) **discovery.zen.ping.unicast.hosts 는 직접 수정 필요, 기존에 설정한 마스터 노드 3대만 설정(데이터노드 아이피 설정 금지)**
-7) **./tuto4-2 1 ./tuto4-2 2 실행 후 discovery.zen.ping.unicast.hosts 에 기존 장비와 추가했던 노드 3대의 ip:9300 설정 필요**
+7) **./tuto4 1 ./tuto4 2 실행 후 discovery.zen.ping.unicast.hosts 에 기존 장비와 추가했던 노드 3대의 ip:9300 설정 필요**
 
 ```bash
 ### ES Node Role Settings
@@ -112,7 +114,7 @@ node.attr.box_type: warm
 10) 두 파일 모두 수정이 완료되었으면 추가할 노드 3대에서 스크립트 3번을 실행하여 ES 프로세스 시작, 클러스터에 잘 조인되는지 확인
 
 ```bash
-[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4]$ ./tuto4-2 3
+[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4]$ ./tuto4 3
 
 ```
 
@@ -131,7 +133,7 @@ node.attr.box_type: hot
 12) 4번 스크립트 실행으로 신규 인덱스는 무조건 hot data node 로 할당될 수 있도록 템플릿 설정
 
 ```bash
-[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4]$ ./tuto4-2 4
+[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4]$ ./tuto4 4
 
 curl -s -H 'Content-Type: application/json' -XPUT http://localhost:9200/_template/estemplate -d '
 {
@@ -147,7 +149,7 @@ curl -s -H 'Content-Type: application/json' -XPUT http://localhost:9200/_templat
 13) 클러스터 내 모든 인덱스에 hot box_type 으로 설정
 
 ```bash
-[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4]$ ./tuto4-2 5
+[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4]$ ./tuto4 5
 
 curl -s -H 'Content-Type: application/json' -XPUT http://localhost:9200/_all/_settings -d '
 {
@@ -159,7 +161,7 @@ curl -s -H 'Content-Type: application/json' -XPUT http://localhost:9200/_all/_se
 14) warm data node 로 이동이 필요한 인덱스만 명령을 통해 재할당 진행
 
 ```bash
-[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4]$ ./tuto4-2 6 firstindex
+[ec2-user@ip-xxx-xxx-xxx-xxx ES-Tutorial-4]$ ./tuto4 6 firstindex
 
 curl -s -H 'Content-Type: application/json' -XPUT http://localhost:9200/$1/_settings -d '
 {
